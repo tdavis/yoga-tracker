@@ -1,4 +1,4 @@
-import { State, useHookstate } from "@hookstate/core";
+import { State, hookstate, useHookstate } from "@hookstate/core";
 import { Platform } from "react-native";
 
 const localhost = Platform.OS === "web" ? "localhost:8080" : "10.0.2.2:8080";
@@ -13,10 +13,15 @@ export interface Checkin {
 
 export function fetchCheckins(user: string) {
   const resourcePath = `http://${localhost}/checkins/${user}`;
-  console.log(resourcePath);
   return fetch(resourcePath).then((r) => {
-    console.log("FETCH", r, "JSON", r.json());
-    return r.json();
+    const body = r.json() as Promise<{ string: any }[]>;
+    console.log("FETCH", r, "JSON", body);
+    return body.then((b) =>
+      b.map((i: any) => ({
+        ...i,
+        completed_at: Date.parse(i.completed_at as string),
+      })),
+    );
   });
 }
 
@@ -31,7 +36,7 @@ export function markComplete(user: string, meditation: string) {
   );
 }
 
-const state = useHookstate<Checkin[]>([]);
+const state = hookstate<Checkin[]>([]);
 
 export function useTasksState(): State<Checkin[]> {
   return useHookstate(state);
