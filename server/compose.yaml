@@ -1,0 +1,42 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    networks:
+      - bridge-network
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+      redis:
+        condition: service_started
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+          target: /app
+  redis:
+    image: "redis:alpine"
+    networks:
+      - bridge-network
+  db:
+    image: "postgres:latest"
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
+    networks:
+      - bridge-network
+    volumes:
+      - ${PWD}/db-data/:/var/lib/postgresql/data/
+      - ${PWD}/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 2s
+      retries: 5
+      start_period: 3s
+      timeout: 10s
+networks: 
+  bridge-network:
+    driver: bridge
