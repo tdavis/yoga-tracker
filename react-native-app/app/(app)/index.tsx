@@ -18,6 +18,7 @@ import { useSession } from "@/components/ctx";
 import { Heading } from "@/components/ui/heading/index.web";
 import { Practices, usePracticesState } from "@/components/PracticesState";
 import { Spinner } from "@/components/ui/spinner";
+import { AddIcon, CheckIcon, Icon } from "@/components/ui/icon";
 
 export type PracticesProp = { practices: Practices };
 type ItemProps = { user: string; title: string; checkin: Checkin | undefined };
@@ -36,6 +37,14 @@ function ItemDescription({ checkin }: { checkin: Checkin | undefined }) {
 
 function Item({ user, title, checkin }: ItemProps) {
   const completedToday = checkin?.completed_today ?? 0;
+
+  let icon;
+  if (checkin == undefined) {
+    icon = AddIcon;
+  } else {
+    icon = CheckIcon;
+  }
+
   return (
     <HStack
       space="lg"
@@ -59,24 +68,22 @@ function Item({ user, title, checkin }: ItemProps) {
             {checkin?.completed_today ?? "?"}
           </Text>
         </Box>
-        <VStack>
+        <VStack className="w-[250px]">
           <Text className="text-typography-900 font-roboto line-clamp-1">
             {title}
           </Text>
           <ItemDescription checkin={checkin} />
         </VStack>
+        <Button
+          isDisabled={checkin !== undefined}
+          variant="link"
+          onPress={() => {
+            markComplete(user, title).then(() => reloadTodaysCheckins(user));
+          }}
+        >
+          <Icon as={icon} size="xl" />
+        </Button>
       </HStack>
-      <Button
-        isDisabled={checkin !== undefined}
-        variant="outline"
-        action="secondary"
-        size="xs"
-        onPress={() => {
-          markComplete(user, title).then(() => reloadTodaysCheckins(user));
-        }}
-      >
-        <ButtonText>Mark Complete</ButtonText>
-      </Button>
     </HStack>
   );
 }
