@@ -29,11 +29,12 @@ func CompleteMeditation(completion Completion) (Checkin, error) {
 	return checkin, nil
 }
 
-func GetCheckinsToday(user string) ([]Checkin, error) {
+func GetCheckinsForDate(user string, time time.Time) ([]Checkin, error) {
+	date := time.Format(DATE_FORMAT)
 	cache := GetCache()
 	ctx := context.TODO()
 	var checkins = make([]Checkin, 0)
-	rows, err := db.Query("SELECT DISTINCT ON (meditation) id, user_name, meditation, completed_at FROM checkins WHERE user_name = $1 AND completed_at::date = current_date ORDER BY meditation, completed_at DESC", user)
+	rows, err := db.Query("SELECT DISTINCT ON (meditation) id, user_name, meditation, completed_at FROM checkins WHERE user_name = $1 AND completed_at::date = cast($2 as date) ORDER BY meditation, completed_at DESC", user, date)
 	if err != nil {
 		return checkins, err
 	}
@@ -68,4 +69,25 @@ func GetCheckinsToday(user string) ([]Checkin, error) {
 	}
 
 	return checkins, rows.Err()
+}
+
+func YearlyStats(date time.Time, user string) (YearStats, error) {
+	yearStats := make(YearStats)
+	year := date.Year()
+	rows, err := db.Query("SELECT meditation, count(*) FROM checkins WHERE user_name = $1 AND EXTRACT(year FROM completed_at) = $2 GROUP BY meditation", user, year)
+	if err != nil {
+		return yearStats, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var meditation string
+		var count int
+		err := rows.Scan(&meditation, &count)
+		if err != nil {
+			return yearStats, err
+		}
+		yearStats[meditation] = count
+	}
+
+	return yearStats, nil
 }

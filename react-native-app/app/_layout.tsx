@@ -1,20 +1,10 @@
-import { Stack } from "expo-router";
+import { SessionProvider } from "@/components/ctx";
+import { Slot } from "expo-router";
 
-import "@/global.css";
-import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
-
-export default function RootLayout() {
+export default function Root() {
   return (
-    <GluestackUIProvider mode="light">
-      <Stack>
-        <Stack.Screen
-          name="index"
-          options={{
-            // Hide the header for this route
-            headerShown: false,
-          }}
-        />
-      </Stack>
-    </GluestackUIProvider>
+    <SessionProvider>
+      <Slot />
+    </SessionProvider>
   );
 }

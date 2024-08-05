@@ -1,18 +1,28 @@
 # -*- restclient -*-
 :api-url = http://localhost:8080
+:user-name = test
 
 #
 # Complete meditation
 #
 PUT :api-url/complete
-secretKey: :secret-key
 Content-Type: application/json
 {
-  "user_name": "test",
-  "meditation": "test"
+  "user_name": ":user-name",
+  "meditation": "Shoonya"
 }
 
 #
 # Get today's checkins for a user
 #
-GET :api-url/checkins/test
+GET :api-url/checkins/:user-name/2024-08-03
+
+#
+# Get all practices
+#
+GET :api-url/practices
+
+#
+# Get user stats for the year
+#
+GET :api-url/stats/:user-name/2024

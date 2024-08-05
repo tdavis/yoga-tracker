@@ -16,7 +16,7 @@ RUN --mount=type=cache,target=/gomod-cache go mod download
 
 # Copy the source code. Note the slash at the end, as explained in
 # https://docs.docker.com/reference/dockerfile/#copy
-COPY .env ./*.go ./
+COPY .env  ./*.json ./*.go ./
 
 # Build
 RUN --mount=type=cache,target=/gomod-cache --mount=type=cache,target=/go-cache go build -o main .

@@ -10,12 +10,10 @@ func main() {
 	InitCache()
 
 	e := echo.New()
-	// 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-	//   AllowOrigins: []string{"https://labstack.com", "https://labstack.net"},
-	//   AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
-	// }))
 	e.Use(middleware.CORS())
-	e.GET("/checkins/:user", GetCheckins)
+	e.GET("/checkins/:user/:date", GetCheckins)
 	e.PUT("/complete", CheckIn)
+	e.GET("/practices", GetPractices)
+	e.GET("/stats/:user/:year", GetYearlyStats)
 	e.Logger.Panic(e.Start(":8080"))
 }
