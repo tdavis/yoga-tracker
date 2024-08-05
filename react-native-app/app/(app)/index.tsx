@@ -13,7 +13,6 @@ import { VStack } from "@/components/ui/vstack";
 import { cn } from "@gluestack-ui/nativewind-utils/cn";
 import TimeAgo from "@andordavoti/react-native-timeago";
 import { FlatList } from "react-native";
-import { Yoga } from "../../constants/yoga";
 import { Link } from "expo-router";
 import { useSession } from "@/components/ctx";
 import { Heading } from "@/components/ui/heading/index.web";
@@ -88,15 +87,14 @@ function YogaList({ practices }: PracticesProp) {
   return (
     <SafeAreaView className="flex-1 justify-center items-center">
       <FlatList
-        data={Yoga}
+        data={[...practices.keys()]}
         renderItem={({ item }) => (
           <Item
-            title={item.title}
-            checkin={checkins.value.find((c) => c.meditation == item.title)}
+            title={item as string}
+            checkin={checkins.value.find((c) => c.meditation == item)}
             user={session!!}
           />
         )}
-        keyExtractor={(item) => item.title}
       />
       <HStack space="md" className="gap-4 p-3">
         <Link href="/stats" asChild>

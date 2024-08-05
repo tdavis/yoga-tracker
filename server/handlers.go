@@ -9,8 +9,25 @@ import (
 )
 
 func CheckIn(c echo.Context) error {
+	practices, err := ReadPractices()
+	if err != nil {
+		return internalServerError(c, err)
+	}
+
 	completion := Completion{}
 	c.Bind(&completion)
+
+	var practiceIsValid bool
+	for _, practice := range practices {
+		if practice.Name == completion.Meditation {
+			practiceIsValid = true
+		}
+	}
+
+	if !practiceIsValid {
+		return c.String(http.StatusBadRequest, "Invalid meditation")
+	}
+
 	checkin, err := CompleteMeditation(completion)
 	if err != nil {
 		return internalServerError(c, err)
