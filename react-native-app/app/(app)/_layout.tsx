@@ -1,9 +1,8 @@
-import { Stack } from "expo-router";
-import { useSession } from "@/components/ctx";
+import { useSession } from "@/components/auth";
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 import { Spinner } from "@/components/ui/spinner";
 import "@/global.css";
-import { Redirect } from "expo-router";
+import { Redirect, Stack } from "expo-router";
 
 export default function RootLayout() {
   const { session, isLoading } = useSession();

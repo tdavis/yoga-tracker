@@ -20,7 +20,6 @@ func CompleteMeditation(completion Completion) (Checkin, error) {
 	ctx := context.TODO()
 	key := checkin.CompletedAt.Format(DATE_FORMAT)
 	result := cache.HIncrBy(ctx, checkin.Meditation, key, 1)
-	result.Result()
 	if value, err := result.Result(); err == nil {
 		checkin.CompletedToday = value
 	} else {

@@ -1,17 +1,10 @@
-import {
-  Checkin,
-  fetchCheckins,
-  markComplete,
-  reloadTodaysCheckins,
-  useCheckinsState,
-} from "@/components/CheckinsState";
+import { useSession } from "@/components/auth";
 import { Button, ButtonText } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 import { HStack } from "@/components/ui/hstack";
+import { Input, InputField } from "@/components/ui/input";
 import { SafeAreaView } from "@/components/ui/safe-area-view";
 import { useHookstate } from "@hookstate/core";
-import { Input, InputField } from "@/components/ui/input";
-import { useSession } from "@/components/ctx";
-import { Heading } from "@/components/ui/heading";
 import { router } from "expo-router";
 
 export default function Login() {
