@@ -34,7 +34,7 @@ func GetCheckinsForDate(user string, time time.Time) ([]Checkin, error) {
 	cache := GetCache()
 	ctx := context.TODO()
 	var checkins = make([]Checkin, 0)
-	rows, err := db.Query("SELECT DISTINCT ON (meditation) id, user_name, meditation, completed_at FROM checkins WHERE user_name = $1 AND completed_at::date = cast($2 as date) ORDER BY meditation, completed_at DESC", user, date)
+	rows, err := db.Query("SELECT id, user_name, meditation, completed_at FROM checkins WHERE user_name = $1 AND completed_at::date = cast($2 as date) ORDER BY meditation, completed_at DESC", user, date)
 	if err != nil {
 		return checkins, err
 	}

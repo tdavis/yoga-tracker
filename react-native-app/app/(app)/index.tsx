@@ -17,8 +17,12 @@ import { Yoga } from "../../constants/yoga";
 import { Link } from "expo-router";
 import { useSession } from "@/components/ctx";
 import { Heading } from "@/components/ui/heading/index.web";
+import { Practices, usePracticesState } from "@/components/PracticesState";
+import { Spinner } from "@/components/ui/spinner";
 
+export type PracticesProp = { practices: Practices };
 type ItemProps = { user: string; title: string; checkin: Checkin | undefined };
+
 function ItemDescription({ checkin }: { checkin: Checkin | undefined }) {
   if (checkin === undefined) {
     return <></>;
@@ -32,7 +36,6 @@ function ItemDescription({ checkin }: { checkin: Checkin | undefined }) {
 }
 
 function Item({ user, title, checkin }: ItemProps) {
-  const checkins = useCheckinsState();
   const completedToday = checkin?.completed_today ?? 0;
   return (
     <HStack
@@ -79,7 +82,7 @@ function Item({ user, title, checkin }: ItemProps) {
   );
 }
 
-function YogaList() {
+function YogaList({ practices }: PracticesProp) {
   const checkins = useCheckinsState();
   const { signOut, session } = useSession();
   return (
@@ -120,10 +123,15 @@ export default function Index() {
   const { session } = useSession();
   reloadTodaysCheckins(session!!);
 
+  const practices = usePracticesState();
+  if (practices.promised) {
+    return <Spinner size="small" />;
+  }
+
   return (
     <SafeAreaView className="flex-1 justify-center items-center">
       <Heading>Hello, {session}</Heading>
-      <YogaList />
+      <YogaList practices={practices.value} />
     </SafeAreaView>
   );
 }

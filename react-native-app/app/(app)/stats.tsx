@@ -4,7 +4,7 @@ import {
   reloadTodaysCheckins,
   useCheckinsState,
 } from "@/components/CheckinsState";
-import { Practices, usePracticesState } from "@/components/PracticesState";
+import { usePracticesState } from "@/components/PracticesState";
 import { useSession } from "@/components/ctx";
 import { Card } from "@/components/ui/card";
 import { Center } from "@/components/ui/center";
@@ -27,13 +27,10 @@ import format from "date-fns/format";
 import getYear from "date-fns/getYear";
 import subDays from "date-fns/subDays";
 import { ScrollView } from "react-native";
+import { PracticesProp } from ".";
 
 type UserProp = {
   user: string;
-};
-
-type PracticesProp = {
-  practices: Practices;
 };
 
 function Today({ practices }: PracticesProp) {
@@ -104,12 +101,12 @@ function PastWeek({ user, practices }: UserProp & PracticesProp) {
 
   return (
     <Card size="md" variant="outline" className="m-3">
-      <Heading>Past Week</Heading>
+      <Heading>Previous Seven Days</Heading>
       <Table className="w-full mt-3">
         <TableHeader>
           <TableRow>
             <TableHead>Day</TableHead>
-            <TableHead>Num</TableHead>
+            <TableHead>#</TableHead>
             <TableHead>Mins</TableHead>
           </TableRow>
         </TableHeader>
