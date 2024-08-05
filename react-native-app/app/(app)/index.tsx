@@ -77,9 +77,7 @@ function Item({ user, title, checkin }: ItemProps) {
         <Button
           isDisabled={checkin !== undefined}
           variant="link"
-          onPress={() => {
-            markComplete(user, title).then(() => reloadTodaysCheckins(user));
-          }}
+          onPress={() => markComplete(user, title)}
         >
           <Icon as={icon} size="xl" />
         </Button>

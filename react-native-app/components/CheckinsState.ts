@@ -14,15 +14,19 @@ export interface Checkin {
   completed_today: number;
 }
 
+function parseCheckin(body: any): Checkin {
+  return {
+    ...body,
+    completed_at: Date.parse(body.completed_at as string),
+  };
+}
+
 export async function fetchCheckins(user: string, date: Date) {
   const formatted = format(date, "yyyy-MM-dd");
   const resourcePath = `http://${localhost}/checkins/${user}/${formatted}`;
   const response = await fetch(resourcePath);
   const body = await response.json();
-  return body.map((i: any) => ({
-    ...i,
-    completed_at: Date.parse(i.completed_at as string),
-  }));
+  return body.map((e: any) => parseCheckin(e));
 }
 
 export async function reloadTodaysCheckins(user: string) {
@@ -36,7 +40,17 @@ export async function markComplete(user: string, meditation: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ user_name: user, meditation }),
   };
-  return fetch(`http://${localhost}/complete`, requestOptions);
+  const response = await fetch(`http://${localhost}/complete`, requestOptions);
+  const checkin = parseCheckin(await response.json());
+
+  state.set((v) => {
+    const existing = v.findIndex((c) => c.meditation == checkin.meditation);
+    if (existing > -1) {
+      v.splice(existing, 1);
+    }
+    v.push(checkin);
+    return v;
+  });
 }
 
 const state = hookstate<Checkin[]>([]);
