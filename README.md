@@ -9,7 +9,7 @@ The backend lives under `server/` and is written in Go using the [Echo](https://
 Run the backend with `docker compose up` (requires Docker Desktop or standalone Docker Compose). Configuration is stored in `.env` which can be used to override the PostgreSQL and Redis connection details. Supported practices are stored in `practices.json` and respected by the client.
 
 - `models.go` - data model used internally and in responses
-- `repositories.go` - methods for storage-related business logic
+- `checkin.go` - `CheckinStore` repository holds business logic for persistent data
 - `handlers.go` - Echo integration
 - `init.sql` - runs when the Docker Compose PostgreSQL container is first created; would need to be done through other means in a production deployment.
 - `queries.restclient` - example queries to test the API using [Emacs restclient](https://github.com/pashky/restclient.el) 

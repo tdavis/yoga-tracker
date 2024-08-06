@@ -10,9 +10,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-var cache *redis.Client
-
-func InitCache() error {
+func InitCache() (*redis.Client, error) {
 	cacheHost := os.Getenv("REDIS_HOST")
 	cachePort := os.Getenv("REDIS_PORT")
 	cachePassword := os.Getenv("REDIS_PASSWORD")
@@ -29,20 +27,16 @@ func InitCache() error {
 		}
 	}
 
-	cache = redis.NewClient(&redis.Options{
+	cache := redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%s", cacheHost, cachePort),
 		Password: cachePassword,
 		DB:       cacheDb,
 	})
 	if err := cache.Ping(context.TODO()).Err(); err != nil {
-		return err
+		return nil, err
 	}
 
 	fmt.Println("Successfully connected to Redis")
 
-	return nil
-}
-
-func GetCache() *redis.Client {
-	return cache
+	return cache, nil
 }

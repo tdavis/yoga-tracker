@@ -1,27 +1,36 @@
-package repo
+package storage
 
 import (
 	"checkin/internal/models"
-	"checkin/internal/storage"
 	"context"
+	"database/sql"
 	"strconv"
 	"time"
+
+	"github.com/redis/go-redis/v9"
 )
 
 const DATE_FORMAT = "2006-01-02"
 
-func CompleteMeditation(completion models.Completion) (models.Checkin, error) {
+type CheckinStore struct {
+	db    *sql.DB
+	cache *redis.Client
+}
+
+func NewCheckinStore(db *sql.DB, cache *redis.Client) CheckinStore {
+	return CheckinStore{db, cache}
+}
+
+func (store CheckinStore) CheckIn(completion models.Completion) (models.Checkin, error) {
 	checkin := models.Checkin{Id: 0, User: completion.User, Meditation: completion.Meditation, CompletedAt: time.Now(), CompletedToday: 0}
-	db := storage.GetDB()
-	cache := storage.GetCache()
 	sqlStatement := `INSERT INTO checkins (user_name, meditation, completed_at) VALUES ($1, $2, now()) RETURNING completed_at, id`
-	err := db.QueryRow(sqlStatement, completion.User, completion.Meditation).Scan(&checkin.CompletedAt, &checkin.Id)
+	err := store.db.QueryRow(sqlStatement, completion.User, completion.Meditation).Scan(&checkin.CompletedAt, &checkin.Id)
 	if err != nil {
 		return checkin, err
 	}
 	ctx := context.TODO()
 	key := checkin.CompletedAt.Format(DATE_FORMAT)
-	result := cache.HIncrBy(ctx, checkin.Meditation, key, 1)
+	result := store.cache.HIncrBy(ctx, checkin.Meditation, key, 1)
 	if value, err := result.Result(); err == nil {
 		checkin.CompletedToday = value
 	} else {
@@ -30,13 +39,11 @@ func CompleteMeditation(completion models.Completion) (models.Checkin, error) {
 	return checkin, nil
 }
 
-func GetCheckinsForDate(user string, time time.Time) ([]models.Checkin, error) {
-	db := storage.GetDB()
+func (store CheckinStore) GetCheckinsForDate(user string, time time.Time) ([]models.Checkin, error) {
 	date := time.Format(DATE_FORMAT)
-	cache := storage.GetCache()
 	ctx := context.TODO()
 	var checkins = make([]models.Checkin, 0)
-	rows, err := db.Query("SELECT id, user_name, meditation, completed_at FROM checkins WHERE user_name = $1 AND completed_at::date = cast($2 as date) ORDER BY meditation, completed_at DESC", user, date)
+	rows, err := store.db.Query("SELECT id, user_name, meditation, completed_at FROM checkins WHERE user_name = $1 AND completed_at::date = cast($2 as date) ORDER BY meditation, completed_at DESC", user, date)
 	if err != nil {
 		return checkins, err
 	}
@@ -48,13 +55,13 @@ func GetCheckinsForDate(user string, time time.Time) ([]models.Checkin, error) {
 			return checkins, err
 		}
 		key := checkin.CompletedAt.Format(DATE_FORMAT)
-		exists, err := cache.HExists(ctx, checkin.Meditation, key).Result()
+		exists, err := store.cache.HExists(ctx, checkin.Meditation, key).Result()
 		if err != nil {
 			return checkins, err
 		}
 
 		if exists {
-			val, err := cache.HGet(ctx, checkin.Meditation, key).Result()
+			val, err := store.cache.HGet(ctx, checkin.Meditation, key).Result()
 			if err != nil {
 				return checkins, err
 			}
@@ -67,17 +74,14 @@ func GetCheckinsForDate(user string, time time.Time) ([]models.Checkin, error) {
 			}
 		}
 		checkins = append(checkins, checkin)
-
 	}
-
 	return checkins, rows.Err()
 }
 
-func YearlyStats(date time.Time, user string) (models.YearStats, error) {
-	db := storage.GetDB()
+func (store CheckinStore) GetYearlyStats(date time.Time, user string) (models.YearStats, error) {
 	yearStats := make(models.YearStats)
 	year := date.Year()
-	rows, err := db.Query("SELECT meditation, count(*) FROM checkins WHERE user_name = $1 AND EXTRACT(year FROM completed_at) = $2 GROUP BY meditation", user, year)
+	rows, err := store.db.Query("SELECT meditation, count(*) FROM checkins WHERE user_name = $1 AND EXTRACT(year FROM completed_at) = $2 GROUP BY meditation", user, year)
 	if err != nil {
 		return yearStats, err
 	}

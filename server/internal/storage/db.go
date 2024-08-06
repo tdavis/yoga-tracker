@@ -8,13 +8,11 @@ import (
 	"os"
 )
 
-var db *sql.DB
-
-func InitDB() error {
+func InitDB() (*sql.DB, error) {
 	var err error
 
 	if err = godotenv.Load(); err != nil {
-		return err
+		return nil, err
 	}
 
 	dbHost := os.Getenv("POSTGRES_HOST")
@@ -25,19 +23,16 @@ func InitDB() error {
 
 	connStr := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", dbHost, dbUser, dbPass, dbName, dbPort)
 
-	if db, err = sql.Open("postgres", connStr); err != nil {
-		return err
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		return nil, err
 	}
 
 	if err = db.Ping(); err != nil {
-		return err
+		return nil, err
 	}
 
 	fmt.Println("Successfully connected to PostgreSQL")
 
-	return nil
-}
-
-func GetDB() *sql.DB {
-	return db
+	return db, nil
 }

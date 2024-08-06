@@ -1,13 +1,16 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"time"
 
+	"checkin/internal/context"
 	"checkin/internal/models"
 	"checkin/internal/practices"
-	"checkin/internal/repo"
+	"checkin/internal/storage"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -30,8 +33,8 @@ func CheckIn(c echo.Context) error {
 	if !practiceIsValid {
 		return c.String(http.StatusBadRequest, "Invalid meditation")
 	}
-
-	checkin, err := repo.CompleteMeditation(completion)
+	context := c.(*context.CustomContext)
+	checkin, err := context.CheckinStore.CheckIn(completion)
 	if err != nil {
 		return internalServerError(c, err)
 	}
@@ -39,12 +42,13 @@ func CheckIn(c echo.Context) error {
 }
 
 func GetCheckins(c echo.Context) error {
+	context := c.(*context.CustomContext)
 	user := c.Param("user")
-	date, err := time.Parse(repo.DATE_FORMAT, c.Param("date"))
+	date, err := time.Parse(storage.DATE_FORMAT, c.Param("date"))
 	if err != nil {
 		return internalServerError(c, err)
 	}
-	checkins, err := repo.GetCheckinsForDate(user, date)
+	checkins, err := context.CheckinStore.GetCheckinsForDate(user, date)
 	if err != nil {
 		return internalServerError(c, err)
 	}
@@ -61,12 +65,14 @@ func GetPractices(c echo.Context) error {
 }
 
 func GetYearlyStats(c echo.Context) error {
+	context := c.(*context.CustomContext)
+	fmt.Print(context)
 	user := c.Param("user")
 	date, err := time.Parse("2006", c.Param("year"))
 	if err != nil {
 		return internalServerError(c, err)
 	}
-	stats, err := repo.YearlyStats(date, user)
+	stats, err := context.CheckinStore.GetYearlyStats(date, user)
 	if err != nil {
 		return internalServerError(c, err)
 	}
