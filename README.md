@@ -17,7 +17,7 @@ Run the backend with `docker compose up` (requires Docker Desktop or standalone 
 ### Improvements
 
 - [ ] Add integration tests with [Testcontainers](https://golang.testcontainers.org/)
-- [ ] Use modules instead of a single `main` package
+- [x] Use modules instead of a single `main` package
 
 ## Application
 

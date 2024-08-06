@@ -1,1 +1,7 @@
 db-data
+Dockerfile
+.dockerignore
+compose.yaml
+queries.restclient
+compose.yaml
+init.sql
