@@ -1,5 +1,5 @@
+import { API_URL } from "@/constants";
 import { State, hookstate, useHookstate } from "@hookstate/core";
-import { localhost } from "./useCheckinsState";
 
 export type Practice = {
     name: string;
@@ -9,7 +9,7 @@ export type Practice = {
 export type Practices = ReadonlyMap<String, number>;
 
 const state = hookstate<Practices>(() =>
-    fetch(`http://${localhost}/practices`)
+    fetch(`${API_URL}/practices`)
         .then((r) => r.json() as Promise<Practice[]>)
         .then((practices) =>
             practices.reduce(

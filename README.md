@@ -31,5 +31,5 @@ Install dependencies with `npm install` then run the app with `npm run web` or `
 
 ### Improvements
 
-- [ ] Make API host/protocol configurable (currently only works with localhost web/android)
+- [x] Make API host/protocol configurable (currently only works with localhost web/android)
 - [ ] Add tests for components and authentication logic

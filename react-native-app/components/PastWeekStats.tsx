@@ -11,7 +11,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Checkin, localhost } from "@/hooks/useCheckinsState";
+import { API_URL } from "@/constants";
+import { Checkin } from "@/hooks/useCheckinsState";
 import { ImmutableArray, useHookstate } from "@hookstate/core";
 import format from "date-fns/format";
 import subDays from "date-fns/subDays";
@@ -26,9 +27,7 @@ async function getWeekOfStats(user: string): Promise<Map<Date, Checkin[]>> {
   const promises = range.map(async (idx) => {
     const date = subDays(now, idx + 1);
     const formatted = format(date, "yyyy-MM-dd");
-    const response = await fetch(
-      `http://${localhost}/checkins/${user}/${formatted}`,
-    );
+    const response = await fetch(`${API_URL}/checkins/${user}/${formatted}`);
     return response.json().then((body) => [date, body]);
   });
   const all = await Promise.all(promises);

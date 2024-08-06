@@ -1,10 +1,7 @@
+import { API_URL } from "@/constants";
 import { State, hookstate, useHookstate } from "@hookstate/core";
-import { Platform } from "react-native";
 import { startOfToday } from "date-fns";
 import { format } from "date-fns";
-
-export const localhost =
-  Platform.OS === "web" ? "localhost:8080" : "10.0.2.2:8080";
 
 export interface Checkin {
   id: number;
@@ -23,7 +20,7 @@ function parseCheckin(body: any): Checkin {
 
 export async function fetchCheckins(user: string, date: Date) {
   const formatted = format(date, "yyyy-MM-dd");
-  const resourcePath = `http://${localhost}/checkins/${user}/${formatted}`;
+  const resourcePath = `${API_URL}/checkins/${user}/${formatted}`;
   const response = await fetch(resourcePath);
   const body = await response.json();
   return body.map((e: any) => parseCheckin(e));
@@ -40,7 +37,7 @@ export async function markComplete(user: string, meditation: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ user_name: user, meditation }),
   };
-  const response = await fetch(`http://${localhost}/complete`, requestOptions);
+  const response = await fetch(`${API_URL}/complete`, requestOptions);
   const checkin = parseCheckin(await response.json());
 
   state.set((v) => {

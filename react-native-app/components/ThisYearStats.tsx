@@ -5,7 +5,7 @@ import { Heading } from "@/components/ui/heading";
 import { HStack } from "@/components/ui/hstack";
 import { Spinner } from "@/components/ui/spinner";
 import { VStack } from "@/components/ui/vstack";
-import { localhost } from "@/hooks/useCheckinsState";
+import { API_URL } from "@/constants";
 import { useHookstate } from "@hookstate/core";
 import getYear from "date-fns/getYear";
 import { PracticesProp } from "./PracticeList";
@@ -15,7 +15,7 @@ type YearStats = { string: number };
 export function ThisYearStats({ user, practices }: UserProp & PracticesProp) {
   const year = getYear(new Date());
   const stats = useHookstate<YearStats>(() =>
-    fetch(`http://${localhost}/stats/${user}/${year}`).then(
+    fetch(`${API_URL}/stats/${user}/${year}`).then(
       (r) => r.json() as Promise<YearStats>,
     ),
   );
