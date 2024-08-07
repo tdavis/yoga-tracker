@@ -8,6 +8,8 @@ The backend lives under `server/` and is written in Go using the [Echo](https://
 
 Run the backend with `docker compose up` (requires Docker Desktop or standalone Docker Compose). Configuration is stored in `.env` which can be used to override the PostgreSQL and Redis connection details. Supported practices are stored in `practices.json` and respected by the client.
 
+Run tests with `go test ./internal/...`
+
 - `models.go` - data model used internally and in responses
 - `checkin.go` - `CheckinStore` repository holds business logic for persistent data
 - `handlers.go` - Echo integration
@@ -16,6 +18,8 @@ Run the backend with `docker compose up` (requires Docker Desktop or standalone 
 
 ### Improvements
 
+- [x] Add unit tests for `CheckinStore`
+- [ ] Add unit tests for handlers
 - [ ] Add integration tests with [Testcontainers](https://golang.testcontainers.org/)
 - [x] Use modules instead of a single `main` package
 
