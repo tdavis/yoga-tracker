@@ -1,10 +1,9 @@
 package main
 
 import (
-	"checkin/internal/handlers"
+	"checkin/internal/handler"
 	"checkin/internal/storage"
 
-	"checkin/internal/context"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -20,18 +19,15 @@ func main() {
 		panic(err)
 	}
 
+	store := storage.NewCheckinStore(db, cache)
+	handler := handler.NewHandler(&store)
+
 	e := echo.New()
 	e.Debug = true
-	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			cc := &context.CustomContext{c, storage.NewCheckinStore(db, cache)}
-			return next(cc)
-		}
-	})
 	e.Use(middleware.CORS())
-	e.GET("/checkins/:user/:date", handlers.GetCheckins)
-	e.PUT("/complete", handlers.CheckIn)
-	e.GET("/practices", handlers.GetPractices)
-	e.GET("/stats/:user/:year", handlers.GetYearlyStats)
+	e.GET("/checkins/:user/:date", handler.GetCheckins)
+	e.PUT("/complete", handler.CheckIn)
+	e.GET("/practices", handler.GetPractices)
+	e.GET("/stats/:user/:year", handler.GetYearlyStats)
 	e.Logger.Panic(e.Start(":8080"))
 }

@@ -1,12 +1,10 @@
-package handlers
+package handler
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"time"
 
-	"checkin/internal/context"
 	"checkin/internal/models"
 	"checkin/internal/practices"
 	"checkin/internal/storage"
@@ -14,7 +12,15 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func CheckIn(c echo.Context) error {
+type handler struct {
+	checkinStore *storage.CheckinStore
+}
+
+func NewHandler(store *storage.CheckinStore) *handler {
+	return &handler{store}
+}
+
+func (h *handler) CheckIn(c echo.Context) error {
 	practices, err := practices.ReadPractices()
 	if err != nil {
 		return internalServerError(c, err)
@@ -33,29 +39,27 @@ func CheckIn(c echo.Context) error {
 	if !practiceIsValid {
 		return c.String(http.StatusBadRequest, "Invalid meditation")
 	}
-	context := c.(*context.CustomContext)
-	checkin, err := context.CheckinStore.CheckIn(completion)
+	checkin, err := h.checkinStore.CheckIn(completion)
 	if err != nil {
 		return internalServerError(c, err)
 	}
 	return c.JSON(http.StatusCreated, checkin)
 }
 
-func GetCheckins(c echo.Context) error {
-	context := c.(*context.CustomContext)
+func (h *handler) GetCheckins(c echo.Context) error {
 	user := c.Param("user")
 	date, err := time.Parse(storage.DATE_FORMAT, c.Param("date"))
 	if err != nil {
 		return internalServerError(c, err)
 	}
-	checkins, err := context.CheckinStore.GetCheckinsForDate(user, date)
+	checkins, err := h.checkinStore.GetCheckinsForDate(user, date)
 	if err != nil {
 		return internalServerError(c, err)
 	}
 	return c.JSON(http.StatusOK, checkins)
 }
 
-func GetPractices(c echo.Context) error {
+func (h *handler) GetPractices(c echo.Context) error {
 	content, err := os.ReadFile("./practices.json")
 	if err != nil {
 		return internalServerError(c, err)
@@ -64,15 +68,13 @@ func GetPractices(c echo.Context) error {
 	return c.JSONBlob(http.StatusOK, content)
 }
 
-func GetYearlyStats(c echo.Context) error {
-	context := c.(*context.CustomContext)
-	fmt.Print(context)
+func (h *handler) GetYearlyStats(c echo.Context) error {
 	user := c.Param("user")
 	date, err := time.Parse("2006", c.Param("year"))
 	if err != nil {
 		return internalServerError(c, err)
 	}
-	stats, err := context.CheckinStore.GetYearlyStats(date, user)
+	stats, err := h.checkinStore.GetYearlyStats(date, user)
 	if err != nil {
 		return internalServerError(c, err)
 	}
