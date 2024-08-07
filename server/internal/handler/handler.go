@@ -13,10 +13,10 @@ import (
 )
 
 type handler struct {
-	checkinStore *storage.CheckinStore
+	checkinStore storage.CheckinStore
 }
 
-func NewHandler(store *storage.CheckinStore) *handler {
+func NewHandler(store storage.CheckinStore) *handler {
 	return &handler{store}
 }
 
@@ -60,7 +60,12 @@ func (h *handler) GetCheckins(c echo.Context) error {
 }
 
 func (h *handler) GetPractices(c echo.Context) error {
-	content, err := os.ReadFile("./practices.json")
+	path, err := practices.FindPracticeFile()
+	if err != nil {
+		return internalServerError(c, err)
+	}
+
+	content, err := os.ReadFile(path)
 	if err != nil {
 		return internalServerError(c, err)
 	}

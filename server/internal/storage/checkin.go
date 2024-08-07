@@ -12,16 +12,22 @@ import (
 
 const DATE_FORMAT = "2006-01-02"
 
-type CheckinStore struct {
+type CheckinStore interface {
+	CheckIn(completion models.Completion) (models.Checkin, error)
+	GetCheckinsForDate(user string, time time.Time) ([]models.Checkin, error)
+	GetYearlyStats(date time.Time, user string) (models.YearStats, error)
+}
+
+type DefaultCheckinStore struct {
 	db    *sql.DB
 	cache *redis.Client
 }
 
-func NewCheckinStore(db *sql.DB, cache *redis.Client) CheckinStore {
-	return CheckinStore{db, cache}
+func NewCheckinStore(db *sql.DB, cache *redis.Client) *DefaultCheckinStore {
+	return &DefaultCheckinStore{db, cache}
 }
 
-func (store CheckinStore) CheckIn(completion models.Completion) (models.Checkin, error) {
+func (store DefaultCheckinStore) CheckIn(completion models.Completion) (models.Checkin, error) {
 	checkin := models.Checkin{Id: 0, User: completion.User, Meditation: completion.Meditation, CompletedAt: time.Now(), CompletedToday: 0}
 	sqlStatement := `INSERT INTO checkins (user_name, meditation, completed_at) VALUES ($1, $2, now()) RETURNING completed_at, id`
 	err := store.db.QueryRow(sqlStatement, completion.User, completion.Meditation).Scan(&checkin.CompletedAt, &checkin.Id)
@@ -39,7 +45,7 @@ func (store CheckinStore) CheckIn(completion models.Completion) (models.Checkin,
 	return checkin, nil
 }
 
-func (store CheckinStore) GetCheckinsForDate(user string, time time.Time) ([]models.Checkin, error) {
+func (store DefaultCheckinStore) GetCheckinsForDate(user string, time time.Time) ([]models.Checkin, error) {
 	date := time.Format(DATE_FORMAT)
 	ctx := context.TODO()
 	var checkins = make([]models.Checkin, 0)
@@ -78,7 +84,7 @@ func (store CheckinStore) GetCheckinsForDate(user string, time time.Time) ([]mod
 	return checkins, rows.Err()
 }
 
-func (store CheckinStore) GetYearlyStats(date time.Time, user string) (models.YearStats, error) {
+func (store DefaultCheckinStore) GetYearlyStats(date time.Time, user string) (models.YearStats, error) {
 	yearStats := make(models.YearStats)
 	year := date.Year()
 	rows, err := store.db.Query("SELECT meditation, count(*) FROM checkins WHERE user_name = $1 AND EXTRACT(year FROM completed_at) = $2 GROUP BY meditation", user, year)

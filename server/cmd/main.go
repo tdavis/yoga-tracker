@@ -20,7 +20,7 @@ func main() {
 	}
 
 	store := storage.NewCheckinStore(db, cache)
-	handler := handler.NewHandler(&store)
+	handler := handler.NewHandler(store)
 
 	e := echo.New()
 	e.Debug = true

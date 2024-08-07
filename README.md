@@ -19,7 +19,7 @@ Run tests with `go test ./internal/...`
 ### Improvements
 
 - [x] Add unit tests for `CheckinStore`
-- [ ] Add unit tests for handlers
+- [x] Add unit tests for handlers
 - [ ] Add integration tests with [Testcontainers](https://golang.testcontainers.org/)
 - [x] Use modules instead of a single `main` package
 
