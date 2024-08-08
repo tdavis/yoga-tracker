@@ -29,6 +29,8 @@ The app lives under `react-native-app` and is an Expo application tested using `
 
 Install dependencies with `npm install` then run the app with `npm run web` or `npm run android`. 
 
+Run/watch tests with `npm run test`
+
 - `app/` - layouts and route stack
 - `components/` - internal and `gluestack-ui` components used in layouts
 - `hooks/` - [Hookstate](https://hookstate.js.org) hooks used in layouts and components
@@ -36,4 +38,5 @@ Install dependencies with `npm install` then run the app with `npm run web` or `
 ### Improvements
 
 - [x] Make API host/protocol configurable (currently only works with localhost web/android)
-- [ ] Add tests for components and authentication logic
+- [x] Add tests for authentication logic
+- [ ] Add tests for components

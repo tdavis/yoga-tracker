@@ -14,6 +14,7 @@ export default function RootLayout() {
   if (!session) {
     return <Redirect href="/login" />;
   }
+
   return (
     <GluestackUIProvider mode="light">
       <Stack>
