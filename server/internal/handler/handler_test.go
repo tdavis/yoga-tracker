@@ -34,7 +34,10 @@ func (s *MockCheckinStore) GetYearlyStats(date time.Time, user string) (models.Y
 func init() {
 	_, filename, _, _ := runtime.Caller(0)
 	dir := path.Join(path.Dir(filename), "..")
-	os.Chdir(dir)
+	err := os.Chdir(dir)
+	if err != nil {
+		panic("Couldn't change to directory under test; tests will fail!")
+	}
 }
 
 func TestCheckIn(t *testing.T) {
@@ -62,7 +65,10 @@ func TestCheckIn(t *testing.T) {
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
 
-	h.CheckIn(c)
+	err := h.CheckIn(c)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	assert.Equal(t, http.StatusBadRequest, rec.Code)
 }

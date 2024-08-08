@@ -89,7 +89,10 @@ func TestGetCheckinsForDate(t *testing.T) {
 	assert.Equal(t, models.Checkin{Id: 1, User: user, Meditation: "Shoonya", CompletedAt: date, CompletedToday: int64(0)}, result[0])
 
 	// With Redis counter
-	redis.HIncrBy("Shoonya", date.Format(DATE_FORMAT), 1)
+	_, err = redis.HIncrBy("Shoonya", date.Format(DATE_FORMAT), 1)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	mockGetCheckins(user, date, sql)
 	result, err = store.GetCheckinsForDate(user, date)

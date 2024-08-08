@@ -27,7 +27,10 @@ func (h *handler) CheckIn(c echo.Context) error {
 	}
 
 	completion := models.Completion{}
-	c.Bind(&completion)
+	err = c.Bind(&completion)
+	if err != nil {
+		return internalServerError(c, err)
+	}
 
 	var practiceIsValid bool
 	for _, practice := range practices {
