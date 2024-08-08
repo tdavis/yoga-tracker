@@ -3,13 +3,6 @@ import { Card } from "@/components/ui/card";
 import { Center } from "@/components/ui/center";
 import { Heading } from "@/components/ui/heading";
 import { HStack } from "@/components/ui/hstack";
-import {
-  Table,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { VStack } from "@/components/ui/vstack";
 import { PracticesProp } from "./PracticeList";
 
@@ -17,7 +10,7 @@ export function TodayStats({ practices }: PracticesProp) {
   const checkins = useCheckinsState();
 
   const minutes = checkins.value.reduce(
-    (acc, val) => acc + practices.get(val.meditation)!!,
+    (acc, val) => acc + practices.get(val.meditation)!,
     0,
   );
 

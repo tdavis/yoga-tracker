@@ -26,7 +26,7 @@ export function Practice({ user, title, checkin }: ItemProps) {
   const completedToday = checkin?.completed_today ?? 0;
 
   let icon;
-  if (checkin == undefined) {
+  if (checkin === undefined) {
     icon = AddIcon;
   } else {
     icon = CheckIcon;

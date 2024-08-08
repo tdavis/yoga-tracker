@@ -6,7 +6,7 @@ export type Practice = {
     minutes: number;
 };
 
-export type Practices = ReadonlyMap<String, number>;
+export type Practices = ReadonlyMap<string, number>;
 
 const state = hookstate<Practices>(() =>
     fetch(`${API_URL}/practices`)
@@ -14,7 +14,7 @@ const state = hookstate<Practices>(() =>
         .then((practices) =>
             practices.reduce(
                 (acc, val) => acc.set(val.name, val.minutes),
-                new Map<String, number>(),
+                new Map<string, number>(),
             ),
         ),
 );

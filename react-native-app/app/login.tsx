@@ -28,7 +28,7 @@ export default function Login() {
         </Input>
         <Button
           action="primary"
-          disabled={name.value.length == 0}
+          disabled={name.value.length === 0}
           onPress={() => {
             signIn(name.value);
             router.replace("/");

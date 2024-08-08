@@ -8,7 +8,8 @@ import { usePracticesState } from "@/hooks/usePracticesState";
 
 export default function Index() {
   const { session } = useSession();
-  reloadTodaysCheckins(session!!);
+
+  reloadTodaysCheckins(session!);
 
   const practices = usePracticesState();
   if (practices.promised) {

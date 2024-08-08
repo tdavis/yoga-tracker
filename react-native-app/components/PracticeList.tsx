@@ -20,8 +20,8 @@ export function PracticeList({ practices }: PracticesProp) {
         renderItem={({ item }) => (
           <Practice
             title={item as string}
-            checkin={checkins.value.find((c) => c.meditation == item)}
-            user={session!!}
+            checkin={checkins.value.find((c) => c.meditation === item)}
+            user={session!}
           />
         )}
       />

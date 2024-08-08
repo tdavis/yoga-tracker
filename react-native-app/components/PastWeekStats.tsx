@@ -46,7 +46,7 @@ export function PastWeekStats({ user, practices }: UserProp & PracticesProp) {
 
   const sumMinutes = (checkins: ImmutableArray<Checkin>) =>
     checkins
-      .map((c) => practices.get(c.meditation)!!)
+      .map((c) => practices.get(c.meditation)!)
       .reduce((acc, val) => acc + val, 0);
   const allCheckins = [...stats.value.values()].flat();
 

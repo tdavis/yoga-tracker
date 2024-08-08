@@ -39,7 +39,7 @@ export function ThisYearStats({ user, practices }: UserProp & PracticesProp) {
         <VStack className="p-3">
           <Heading size="4xl">
             {Object.entries(stats.value).reduce(
-              (acc, val) => acc + practices.get(val[0])!! * val[1],
+              (acc, val) => acc + practices.get(val[0])! * val[1],
               0,
             )}
           </Heading>

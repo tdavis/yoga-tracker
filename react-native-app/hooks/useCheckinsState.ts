@@ -41,7 +41,7 @@ export async function markComplete(user: string, meditation: string) {
   const checkin = parseCheckin(await response.json());
 
   state.set((v) => {
-    const existing = v.findIndex((c) => c.meditation == checkin.meditation);
+    const existing = v.findIndex((c) => c.meditation === checkin.meditation);
     if (existing > -1) {
       v.splice(existing, 1);
     }
