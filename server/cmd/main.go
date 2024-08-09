@@ -26,6 +26,7 @@ func main() {
 	e.Debug = true
 	e.Use(middleware.CORS())
 	e.GET("/checkins/:user/:date", handler.GetCheckins)
+	e.GET("/users/:date", handler.GetUsersForDate)
 	e.PUT("/complete", handler.CheckIn)
 	e.GET("/practices", handler.GetPractices)
 	e.GET("/stats/:user/:year", handler.GetYearlyStats)

@@ -18,6 +18,11 @@ Content-Type: application/json
 GET :api-url/checkins/:user-name/2024-08-03
 
 #
+# Get today's total users practiced
+#
+GET :api-url/users/2024-08-03
+
+#
 # Get all practices
 #
 GET :api-url/practices

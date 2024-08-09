@@ -15,6 +15,7 @@ const DATE_FORMAT = "2006-01-02"
 type CheckinStore interface {
 	CheckIn(completion models.Completion) (models.Checkin, error)
 	GetCheckinsForDate(user string, time time.Time) ([]models.Checkin, error)
+	GetUsersForDate(time time.Time) (int64, error)
 	GetYearlyStats(date time.Time, user string) (models.YearStats, error)
 }
 
@@ -82,6 +83,22 @@ func (store DefaultCheckinStore) GetCheckinsForDate(user string, time time.Time)
 		checkins = append(checkins, checkin)
 	}
 	return checkins, rows.Err()
+}
+func (store DefaultCheckinStore) GetUsersForDate(time time.Time) (int64, error) {
+	date := time.Format(DATE_FORMAT)
+	var count int64
+	rows, err := store.db.Query("SELECT count(DISTINCT user_name) FROM checkins WHERE completed_at::date = cast($1 as date)", date)
+	if err != nil {
+		return count, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&count)
+		if err != nil {
+			return count, err
+		}
+	}
+	return count, rows.Err()
 }
 
 func (store DefaultCheckinStore) GetYearlyStats(date time.Time, user string) (models.YearStats, error) {

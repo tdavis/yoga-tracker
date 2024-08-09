@@ -62,6 +62,18 @@ func (h *handler) GetCheckins(c echo.Context) error {
 	return c.JSON(http.StatusOK, checkins)
 }
 
+func (h *handler) GetUsersForDate(c echo.Context) error {
+	date, err := time.Parse(storage.DATE_FORMAT, c.Param("date"))
+	if err != nil {
+		return internalServerError(c, err)
+	}
+	count, err := h.checkinStore.GetUsersForDate(date)
+	if err != nil {
+		return internalServerError(c, err)
+	}
+	return c.JSON(http.StatusOK, count)
+}
+
 func (h *handler) GetPractices(c echo.Context) error {
 	path, err := practices.FindPracticeFile()
 	if err != nil {
