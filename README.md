@@ -16,12 +16,23 @@ Run tests with `go test ./internal/...`
 - `init.sql` - runs when the Docker Compose PostgreSQL container is first created; would need to be done through other means in a production deployment.
 - `queries.restclient` - example queries to test the API using [Emacs restclient](https://github.com/pashky/restclient.el) 
 
+### Libraries
+
+- `Echo` web framework
+- `godotenv` for reading `.env`
+- `pq` postgres driver
+- `go-redis` redis driver
+-  `miniredis` and `go-sqlmock` test mocks
+- `testify` assertions
+
 ### Improvements
 
 - [x] Add unit tests for `CheckinStore`
 - [x] Add unit tests for handlers
 - [ ] Add integration tests with [Testcontainers](https://golang.testcontainers.org/)
 - [x] Use modules instead of a single `main` package
+- [ ] Accept completion date from app
+- [ ] Date validation 
 
 ## Application
 
@@ -34,6 +45,17 @@ Run/watch tests with `npm run test`
 - `app/` - layouts and route stack
 - `components/` - internal and `gluestack-ui` components used in layouts
 - `hooks/` - [Hookstate](https://hookstate.js.org) hooks used in layouts and components
+
+### Libraries
+
+- `Expo` layouts and router
+- `gluestack-ui` UI components
+- `Hookstate` state management
+- `async-storage` caching
+- `expo-secure-store` session storage
+- `testing-library` Expo tests
+- `jest` test runner
+- `eslint` and `prettier` for linting/formatting
 
 ### Improvements
 
