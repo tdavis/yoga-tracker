@@ -40,3 +40,149 @@ Run/watch tests with `npm run test`
 - [x] Make API host/protocol configurable (currently only works with localhost web/android)
 - [x] Add tests for authentication logic
 - [ ] Add tests for components
+
+### API Reference
+
+#### Get Practices
+
+Practice names and respective duration in minutes is stored in `practices.json` and exposed to the app through an endpoint.
+
+##### Request
+``` http
+GET /practices
+```
+
+##### Response
+
+``` json
+[
+  {
+    "name": "Surya Kriya",
+    "minutes": 21
+  },
+  {
+    "name": "Shambhavi Mahamudra Kriya",
+    "minutes": 21
+  },
+  {
+    "name": "Yogasanas",
+    "minutes": 90
+  },
+  // ...
+]
+```
+
+
+#### Mark Complete
+
+Users mark meditations as complete. 
+
+##### Request
+``` http
+PUT /complete
+Content-Type: application/json
+
+{
+  "user_name": "tom",
+  "meditation": "Shoonya"
+}
+```
+
+##### Response
+
+Includes the data written and the total completed today across all users as `completed_today`.
+
+``` json
+{
+  "id": 192,
+  "user_name": "test",
+  "meditation": "Shoonya",
+  "completed_at": "2024-08-09T11:03:04.126389Z",
+  "completed_today": 2
+}
+```
+
+#### Get Checkins
+
+Get all the checkins (completed meditations) for a given user and day; used to populate the main screen and calculate values on the stats screen.
+
+##### Request
+``` http
+GET /checkins/tom/2024-08-03
+```
+
+##### Response
+
+Includes the user's checkins and the total completed today across all users as `completed_today`.
+
+``` json
+[
+  {
+    "id": 117,
+    "user_name": "test",
+    "meditation": "Samyama Sadhana",
+    "completed_at": "2024-08-03T07:51:29.049075Z",
+    "completed_today": 6
+  },
+  {
+    "id": 115,
+    "user_name": "test",
+    "meditation": "Shakti Chalana Kriya",
+    "completed_at": "2024-08-03T07:51:28.074071Z",
+    "completed_today": 5
+  },
+  // ...
+]
+```
+
+#### Get Users
+
+Gets the total count of users practiced for a given date; used to populate stats screen.
+
+##### Request
+``` http
+GET /users/2024-08-03
+```
+
+##### Response
+
+``` json
+4
+```
+
+#### User Yearly Stats
+
+Get a mapping of meditation to number of checkins for a given year for a user; used to populate stats screen.
+
+##### Request
+``` http
+GET /stats/tom/2024-08-03
+```
+
+##### Response
+
+``` json
+{
+  "Samyama Sadhana": 1,
+  "Shakti Chalana Kriya": 17,
+  "Shambhavi Mahamudra Kriya": 2,
+  "Shoonya": 5,
+  "Surya Kriya": 9,
+  "Yogasanas": 8
+}
+```
+
+#### Get Users
+
+Gets the total count of users practiced for a given date; used to populate stats screen.
+
+##### Request
+``` http
+GET /users/2024-08-03
+```
+
+##### Response
+
+``` json
+4
+```
