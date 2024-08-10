@@ -179,7 +179,7 @@ Get a mapping of meditation to number of checkins for a given year for a user; u
 
 ##### Request
 ``` http
-GET /stats/tom/2024-08-03
+GET /stats/tom/2024
 ```
 
 ##### Response
