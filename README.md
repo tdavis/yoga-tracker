@@ -158,21 +158,6 @@ Includes the user's checkins and the total completed today across all users as `
 ]
 ```
 
-#### Get Users
-
-Gets the total count of users practiced for a given date; used to populate stats screen.
-
-##### Request
-``` http
-GET /users/2024-08-03
-```
-
-##### Response
-
-``` json
-4
-```
-
 #### User Yearly Stats
 
 Get a mapping of meditation to number of checkins for a given year for a user; used to populate stats screen.
