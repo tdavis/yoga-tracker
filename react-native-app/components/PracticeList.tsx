@@ -31,7 +31,6 @@ export function PracticeList({ practices }: PracticesProp) {
         return c;
       });
     }, 10000);
-    console.log(timerRef.current);
   };
   //useEffect(() => clearTimeout(timerRef.current));
 
