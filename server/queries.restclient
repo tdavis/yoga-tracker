@@ -31,3 +31,8 @@ GET :api-url/practices
 # Get user stats for the year
 #
 GET :api-url/stats/:user-name/2024
+
+#
+# Get count of users practiced on date
+#
+GET :api-url/users/2024-08-03
