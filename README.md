@@ -31,7 +31,7 @@ Run tests with `go test ./internal/...`
 - [x] Add unit tests for handlers
 - [ ] Add integration tests with [Testcontainers](https://golang.testcontainers.org/)
 - [x] Use modules instead of a single `main` package
-- [ ] Accept completion date from app
+- [x] Accept completion date from app
 - [ ] Date validation 
 
 ## Application
@@ -106,7 +106,8 @@ Content-Type: application/json
 
 {
   "user_name": "tom",
-  "meditation": "Shoonya"
+  "meditation": "Shoonya",
+  "timestamp": "2024-08-09T11:03:04.126389Z"
 }
 ```
 

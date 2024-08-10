@@ -29,6 +29,9 @@ func (s *MockCheckinStore) GetCheckinsForDate(user string, time time.Time) ([]mo
 func (s *MockCheckinStore) GetYearlyStats(date time.Time, user string) (models.YearStats, error) {
 	return models.YearStats{}, nil
 }
+func (s *MockCheckinStore) GetUsersForDate(date time.Time) (int64, error) {
+	return int64(11), nil
+}
 
 // Make it possible to find practices.json when running test
 func init() {

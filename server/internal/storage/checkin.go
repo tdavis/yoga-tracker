@@ -30,8 +30,8 @@ func NewCheckinStore(db *sql.DB, cache *redis.Client) *DefaultCheckinStore {
 
 func (store DefaultCheckinStore) CheckIn(completion models.Completion) (models.Checkin, error) {
 	checkin := models.Checkin{Id: 0, User: completion.User, Meditation: completion.Meditation, CompletedAt: time.Now(), CompletedToday: 0}
-	sqlStatement := `INSERT INTO checkins (user_name, meditation, completed_at) VALUES ($1, $2, now()) RETURNING completed_at, id`
-	err := store.db.QueryRow(sqlStatement, completion.User, completion.Meditation).Scan(&checkin.CompletedAt, &checkin.Id)
+	sqlStatement := `INSERT INTO checkins (user_name, meditation, completed_at) VALUES ($1, $2, cast($3 as timestamptz)) RETURNING completed_at, id`
+	err := store.db.QueryRow(sqlStatement, completion.User, completion.Meditation, completion.Timestamp).Scan(&checkin.CompletedAt, &checkin.Id)
 	if err != nil {
 		return checkin, err
 	}

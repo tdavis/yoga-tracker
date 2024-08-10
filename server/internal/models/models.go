@@ -7,6 +7,7 @@ import (
 type Completion struct {
 	User       string `json:"user_name"`
 	Meditation string `json:"meditation"`
+	Timestamp  string `json:"timestamp"`
 }
 
 type Checkin struct {

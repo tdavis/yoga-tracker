@@ -9,6 +9,7 @@ import {
 import { Identifiable, identifiable } from "@hookstate/identifiable";
 import { Subscribable, subscribable } from "@hookstate/subscribable";
 import { format, startOfToday } from "date-fns";
+import { subSeconds } from "date-fns";
 
 function extensions<S, E>(key: string) {
   return extend<S, E, Identifiable, Subscribable>(
@@ -49,10 +50,12 @@ export async function reloadTodaysCheckins(user: string) {
 }
 
 export async function markComplete(user: string, meditation: string) {
+  const date = subSeconds(new Date(), 30);
+  const timestamp = date.toISOString();
   const requestOptions = {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user_name: user, meditation }),
+    body: JSON.stringify({ user_name: user, meditation, timestamp }),
   };
   const response = await fetch(`${API_URL}/complete`, requestOptions);
   const checkin = parseCheckin(await response.json());

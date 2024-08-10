@@ -50,6 +50,7 @@ func TestCheckIn(t *testing.T) {
 	defer cache.Close()
 
 	completedAt := time.Now()
+	timeout := completedAt.Format("2006-01-02T15:04:05.000Z")
 	sql.ExpectQuery("INSERT INTO checkins .*").
 		WillReturnRows(
 			sqlmock.
@@ -57,7 +58,7 @@ func TestCheckIn(t *testing.T) {
 				AddRow(completedAt, int64(1)))
 
 	store := NewCheckinStore(db, cache)
-	completion := models.Completion{User: "user", Meditation: "meditation"}
+	completion := models.Completion{User: "user", Meditation: "meditation", Timestamp: timeout}
 	result, err := store.CheckIn(completion)
 	if err != nil {
 		t.Fatal(err)
