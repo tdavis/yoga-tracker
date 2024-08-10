@@ -1,20 +1,37 @@
 import { API_URL } from "@/constants";
-import { State, hookstate, useHookstate } from "@hookstate/core";
-import { startOfToday } from "date-fns";
-import { format } from "date-fns";
+import {
+  InferStateExtensionType,
+  State,
+  extend,
+  hookstate,
+  useHookstate,
+} from "@hookstate/core";
+import { Identifiable, identifiable } from "@hookstate/identifiable";
+import { Subscribable, subscribable } from "@hookstate/subscribable";
+import { format, startOfToday } from "date-fns";
+
+function extensions<S, E>(key: string) {
+  return extend<S, E, Identifiable, Subscribable>(
+    identifiable(key),
+    subscribable(),
+  );
+}
 
 export interface Checkin {
   id: number;
   user: string;
   meditation: string;
-  completed_at: Date;
-  completed_today: number;
+  completedAt: Date;
+  completedToday: number;
+  canComplete: boolean;
 }
 
 function parseCheckin(body: any): Checkin {
   return {
     ...body,
-    completed_at: Date.parse(body.completed_at as string),
+    canComplete: false,
+    completedAt: Date.parse(body.completed_at as string),
+    completedToday: body.completed_today,
   };
 }
 
@@ -41,17 +58,16 @@ export async function markComplete(user: string, meditation: string) {
   const checkin = parseCheckin(await response.json());
 
   state.set((v) => {
-    const existing = v.findIndex((c) => c.meditation === checkin.meditation);
-    if (existing > -1) {
-      v.splice(existing, 1);
-    }
-    v.push(checkin);
-    return v;
+    const checkins = v.filter((c) => c.meditation !== checkin.meditation);
+    checkins.push(checkin);
+    return checkins;
   });
 }
 
-const state = hookstate<Checkin[]>([]);
+type Extended = InferStateExtensionType<typeof extensions>;
 
-export function useCheckinsState(): State<Checkin[]> {
+const state = hookstate<Checkin[], Extended>([], extensions("checkins"));
+
+export function useCheckinsState(): State<Checkin[], Extended> {
   return useHookstate(state);
 }

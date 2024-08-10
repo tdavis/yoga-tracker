@@ -8,7 +8,11 @@ import { Checkin, markComplete } from "@/hooks/useCheckinsState";
 import TimeAgo from "@andordavoti/react-native-timeago";
 import { cn } from "@gluestack-ui/nativewind-utils/cn";
 
-type ItemProps = { user: string; title: string; checkin: Checkin | undefined };
+type ItemProps = {
+  user: string;
+  title: string;
+  checkin: Checkin | undefined;
+};
 
 function PracticeDescription({ checkin }: { checkin: Checkin | undefined }) {
   if (checkin === undefined) {
@@ -16,17 +20,18 @@ function PracticeDescription({ checkin }: { checkin: Checkin | undefined }) {
   } else {
     return (
       <Text className="text-sm font-roboto line-clamp-1">
-        <TimeAgo dateTo={checkin.completed_at} />
+        <TimeAgo dateTo={checkin.completedAt} />
       </Text>
     );
   }
 }
 
 export function Practice({ user, title, checkin }: ItemProps) {
-  const completedToday = checkin?.completed_today ?? 0;
+  const completedToday = checkin?.completedToday ?? 0;
+  const canComplete = checkin === undefined || checkin.canComplete;
 
   let icon;
-  if (checkin === undefined) {
+  if (canComplete) {
     icon = AddIcon;
   } else {
     icon = CheckIcon;
@@ -52,7 +57,7 @@ export function Practice({ user, title, checkin }: ItemProps) {
               { "text-error-700": completedToday === 0 },
             )}
           >
-            {checkin?.completed_today ?? "?"}
+            {checkin?.completedToday ?? "?"}
           </Text>
         </Box>
         <VStack className="w-[250px]">
@@ -62,7 +67,7 @@ export function Practice({ user, title, checkin }: ItemProps) {
           <PracticeDescription checkin={checkin} />
         </VStack>
         <Button
-          isDisabled={checkin !== undefined}
+          isDisabled={!canComplete}
           variant="link"
           onPress={() => markComplete(user, title)}
         >
