@@ -16,7 +16,6 @@ export default function Login() {
       <HStack space="md">
         <Input
           variant="outline"
-          size="lg"
           isDisabled={false}
           isInvalid={false}
           isReadOnly={false}
@@ -27,8 +26,7 @@ export default function Login() {
           />
         </Input>
         <Button
-          action="primary"
-          disabled={name.value.length === 0}
+          disabled={name.value.length === 0 || name.value.length > 16}
           onPress={() => {
             signIn(name.value);
             router.replace("/");

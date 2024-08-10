@@ -1,5 +1,4 @@
 import { useSession } from "@/components/auth";
-import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 import { Spinner } from "@/components/ui/spinner";
 import "@/global.css";
 import { Redirect, Stack } from "expo-router";
@@ -16,21 +15,19 @@ export default function RootLayout() {
   }
 
   return (
-    <GluestackUIProvider mode="light">
-      <Stack>
-        <Stack.Screen
-          name="index"
-          options={{
-            headerTitle: "Home",
-          }}
-        />
-        <Stack.Screen
-          name="stats"
-          options={{
-            headerTitle: "Stats",
-          }}
-        />
-      </Stack>
-    </GluestackUIProvider>
+    <Stack>
+      <Stack.Screen
+        name="index"
+        options={{
+          headerTitle: "Home",
+        }}
+      />
+      <Stack.Screen
+        name="stats"
+        options={{
+          headerTitle: "Stats",
+        }}
+      />
+    </Stack>
   );
 }
